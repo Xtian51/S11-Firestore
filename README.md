@@ -307,10 +307,12 @@
 
 <span class="fn">dependencies</span> {
     <span class="cm">// Firebase BoM — gestiona versiones compatibles automáticamente</span>
-    <span class="fn">implementation</span>(<span class="fn">platform</span>(<span class="str">"com.google.firebase:firebase-bom:33.1.0"</span>))
+    <span class="fn">implementation</span>(<span class="fn">platform</span>(<span class="str">"com.google.firebase:firebase-bom:34.5.0"</span>))
 
     <span class="cm">// Firestore con soporte para Kotlin coroutines</span>
-    <span class="fn">implementation</span>(<span class="str">"com.google.firebase:firebase-firestore-ktx"</span>)
+    <span class="fn">implementation</span>(<span class="str">"com.google.firebase:firebase-firestore"</span>)
+    <span class="fn">implementation</span>(<span class="str">"com.google.firebase:firebase-analytics"</span>)
+    <span class="fn">implementation</span>(<span class="str">"com.google.firebase:firebase-database"</span>)
 
     <span class="cm">// ViewModel + LiveData (de Semana 10)</span>
     <span class="fn">implementation</span>(<span class="str">"androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0"</span>)
@@ -356,9 +358,9 @@
       </div>
       <div class="code-body"><pre style="background:transparent"><span class="kw">import</span> androidx.lifecycle.LiveData
 <span class="kw">import</span> androidx.lifecycle.MutableLiveData
-<span class="kw">import</span> com.google.firebase.firestore.ktx.firestore
-<span class="kw">import</span> com.google.firebase.firestore.ktx.toObject
-<span class="kw">import</span> com.google.firebase.ktx.Firebase
+<span class="kw">import</span> com.google.firebase.firestore.firestore
+<span class="kw">import</span> com.google.firebase.firestore.toObject
+<span class="kw">import</span> com.google.firebase.Firebase
 
 <span class="kw">class</span> <span class="cls">NotaRepository</span> {
 
@@ -553,18 +555,59 @@
 
   <!-- Código 8: item_nota.xml — igual que Room, reutilizable -->
   <div class="section">
-    <div class="section-title"><span class="tag xml">XML</span> Código 8 — item_nota.xml</div>
-    <p>El layout del ítem es idéntico al de la Opción A (Room). El adapter también es casi igual — la única diferencia es que el id ahora es un <code>String</code> en lugar de un <code>Int</code>.</p>
+    <div class="section-title"><span class="tag xml">XML</span> Código 9 — item_nota.xml</div>
     <div class="code-block">
       <div class="code-header">
         <span class="code-lang lang-xml">XML</span>
-        <span class="code-filename">res/layout/item_nota.xml — igual al de la Opción A</span>
+        <span class="code-filename">res/layout/item_nota.xml</span>
       </div>
-      <div class="code-body"><pre style="background:transparent"><span class="cm">&lt;!-- Mismo layout que en Room: tvTituloNota, tvContenidoNota, btnEliminarNota --&gt;
-&lt;!-- Ver Código 9 de la Opción A para el XML completo --&gt;</span></pre></div>
+      <div class="code-body"><pre style="background:transparent"><span class="tag">&lt;?xml</span> <span class="attr">version</span>=<span class="val">"1.0"</span> <span class="attr">encoding</span>=<span class="val">"utf-8"</span><span class="tag">?&gt;</span>
+<span class="tag">&lt;androidx.constraintlayout.widget.ConstraintLayout</span>
+    <span class="attr">xmlns:android</span>=<span class="val">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attr">xmlns:app</span>=<span class="val">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="attr">android:layout_width</span>=<span class="val">"match_parent"</span>
+    <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+    <span class="attr">android:padding</span>=<span class="val">"14dp"</span>
+    <span class="attr">android:background</span>=<span class="val">"?attr/selectableItemBackground"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;TextView</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/tvTituloNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:textSize</span>=<span class="val">"17sp"</span>
+        <span class="attr">android:textStyle</span>=<span class="val">"bold"</span>
+        <span class="attr">android:maxLines</span>=<span class="val">"1"</span>
+        <span class="attr">android:ellipsize</span>=<span class="val">"end"</span>
+        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toStartOf</span>=<span class="val">"@id/btnEliminarNota"</span> <span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;TextView</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/tvContenidoNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:textSize</span>=<span class="val">"13sp"</span>
+        <span class="attr">android:textColor</span>=<span class="val">"#888"</span>
+        <span class="attr">android:maxLines</span>=<span class="val">"2"</span>
+        <span class="attr">android:ellipsize</span>=<span class="val">"end"</span>
+        <span class="attr">android:layout_marginTop</span>=<span class="val">"4dp"</span>
+        <span class="attr">app:layout_constraintTop_toBottomOf</span>=<span class="val">"@id/tvTituloNota"</span>
+        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toStartOf</span>=<span class="val">"@id/btnEliminarNota"</span> <span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;Button</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/btnEliminarNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:text</span>=<span class="val">"🗑"</span>
+        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="val">"parent"</span> <span class="tag">/&gt;</span>
+
+<span class="tag">&lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;</span></pre></div>
     </div>
   </div>
-
   <!-- Código 9: NotaAdapter.kt -->
   <div class="section">
     <div class="section-title"><span class="tag kotlin">Kotlin</span> Código 9 — NotaAdapter.kt</div>
@@ -682,14 +725,54 @@
   <!-- Código 11: activity_editar_nota.xml + EditarNotaActivity.kt -->
   <div class="section">
     <div class="section-title"><span class="tag xml">XML</span> Código 11 — activity_editar_nota.xml</div>
-    <p>Idéntico al de la Opción A. Consultar el Código 12 de la Opción A para el XML completo.</p>
     <div class="code-block">
       <div class="code-header">
         <span class="code-lang lang-xml">XML</span>
-        <span class="code-filename">res/layout/activity_editar_nota.xml — igual al de la Opción A</span>
+        <span class="code-filename">res/layout/activity_editar_nota.xml</span>
       </div>
-      <div class="code-body"><pre style="background:transparent"><span class="cm">&lt;!-- Mismo layout: etTituloNota, etContenidoNota, btnGuardarNota --&gt;
-&lt;!-- Ver Código 12 de la Opción A para el XML completo --&gt;</span></pre></div>
+      <div class="code-body"><pre style="background:transparent"><span class="tag">&lt;?xml</span> <span class="attr">version</span>=<span class="val">"1.0"</span> <span class="attr">encoding</span>=<span class="val">"utf-8"</span><span class="tag">?&gt;</span>
+<span class="tag">&lt;androidx.constraintlayout.widget.ConstraintLayout</span>
+    <span class="attr">xmlns:android</span>=<span class="val">"http://schemas.android.com/apk/res/android"</span>
+    <span class="attr">xmlns:app</span>=<span class="val">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="attr">android:layout_width</span>=<span class="val">"match_parent"</span>
+    <span class="attr">android:layout_height</span>=<span class="val">"match_parent"</span>
+    <span class="attr">android:padding</span>=<span class="val">"20dp"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;EditText</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/etTituloNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:hint</span>=<span class="val">"Título"</span>
+        <span class="attr">android:textSize</span>=<span class="val">"20sp"</span>
+        <span class="attr">android:inputType</span>=<span class="val">"textCapSentences"</span>
+        <span class="attr">app:layout_constraintTop_toTopOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="val">"parent"</span> <span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;EditText</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/etContenidoNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:hint</span>=<span class="val">"Escribe tu nota aquí..."</span>
+        <span class="attr">android:gravity</span>=<span class="val">"top"</span>
+        <span class="attr">android:inputType</span>=<span class="val">"textMultiLine|textCapSentences"</span>
+        <span class="attr">android:layout_marginTop</span>=<span class="val">"12dp"</span>
+        <span class="attr">app:layout_constraintTop_toBottomOf</span>=<span class="val">"@id/etTituloNota"</span>
+        <span class="attr">app:layout_constraintBottom_toTopOf</span>=<span class="val">"@id/btnGuardarNota"</span>
+        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="val">"parent"</span> <span class="tag">/&gt;</span>
+
+    <span class="tag">&lt;Button</span>
+        <span class="attr">android:id</span>=<span class="val">"@+id/btnGuardarNota"</span>
+        <span class="attr">android:layout_width</span>=<span class="val">"0dp"</span>
+        <span class="attr">android:layout_height</span>=<span class="val">"wrap_content"</span>
+        <span class="attr">android:text</span>=<span class="val">"Guardar"</span>
+        <span class="attr">android:layout_marginTop</span>=<span class="val">"12dp"</span>
+        <span class="attr">app:layout_constraintBottom_toBottomOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintStart_toStartOf</span>=<span class="val">"parent"</span>
+        <span class="attr">app:layout_constraintEnd_toEndOf</span>=<span class="val">"parent"</span> <span class="tag">/&gt;</span>
+
+<span class="tag">&lt;/androidx.constraintlayout.widget.ConstraintLayout&gt;</span></pre></div>
     </div>
   </div>
 
